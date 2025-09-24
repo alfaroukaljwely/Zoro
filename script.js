@@ -2,7 +2,306 @@
  * Combines all functionality from main.js and inline scripts
  */
 
+// Neural Network Background Animation
+class NeuralNetwork {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.nodes = [];
+    this.connections = [];
+    this.signals = [];
+    this.animationId = null;
+
+    this.resize();
+    this.createNodes();
+    this.createConnections();
+    this.animate();
+
+    window.addEventListener("resize", () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+  }
+
+  createNodes() {
+    this.nodes = [];
+    const nodeCount = Math.floor((this.width * this.height) / 25000); // Reduced node count
+
+    for (let i = 0; i < nodeCount; i++) {
+      this.nodes.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        vx: (Math.random() - 0.5) * 0.1, // Much slower movement
+        vy: (Math.random() - 0.5) * 0.1, // Much slower movement
+        energy: Math.random(),
+        pulsePhase: Math.random() * Math.PI * 2,
+        connections: [],
+      });
+    }
+  }
+
+  createConnections() {
+    this.connections = [];
+    const maxDistance = 120; // Shorter connections for simpler look
+
+    for (let i = 0; i < this.nodes.length; i++) {
+      for (let j = i + 1; j < this.nodes.length; j++) {
+        const dx = this.nodes[i].x - this.nodes[j].x;
+        const dy = this.nodes[i].y - this.nodes[j].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < maxDistance) {
+          const connection = {
+            nodeA: i,
+            nodeB: j,
+            distance: distance,
+            strength: 1 - distance / maxDistance,
+            energy: 0,
+          };
+          this.connections.push(connection);
+          this.nodes[i].connections.push(connection);
+          this.nodes[j].connections.push(connection);
+        }
+      }
+    }
+  }
+
+  createSignal(nodeIndex) {
+    if (Math.random() < 0.005) {
+      // Much lower signal frequency
+      this.signals.push({
+        currentNode: nodeIndex,
+        targetNode: null,
+        progress: 0,
+        speed: 0.005 + Math.random() * 0.01, // Slower signals
+        energy: 0.3 + Math.random() * 0.4, // Lower energy
+        color: this.getSignalColor(),
+      });
+    }
+  }
+
+  getSignalColor() {
+    const colors = [
+      "#26c6da", // Electric blue
+      "#00acc1", // Cyan
+      "#ffd700", // Gold
+      "#00bcd4", // Light cyan
+      "#64b5f6", // Light blue
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  updateNodes() {
+    this.nodes.forEach((node, index) => {
+      // Update position
+      node.x += node.vx;
+      node.y += node.vy;
+
+      // Boundary bounce
+      if (node.x <= 0 || node.x >= this.width) node.vx *= -1;
+      if (node.y <= 0 || node.y >= this.height) node.vy *= -1;
+
+      // Keep in bounds
+      node.x = Math.max(0, Math.min(this.width, node.x));
+      node.y = Math.max(0, Math.min(this.height, node.y));
+
+      // Update energy pulse
+      node.pulsePhase += 0.005; // Much slower pulse
+      node.energy = 0.2 + 0.3 * (Math.sin(node.pulsePhase) * 0.5 + 0.5); // Lower energy range
+
+      // Create signals
+      this.createSignal(index);
+    });
+  }
+
+  updateSignals() {
+    this.signals = this.signals.filter((signal) => {
+      if (signal.targetNode === null) {
+        // Find next node to travel to
+        const currentNode = this.nodes[signal.currentNode];
+        const availableConnections = currentNode.connections.filter(
+          (conn) =>
+            conn.nodeA === signal.currentNode ||
+            conn.nodeB === signal.currentNode
+        );
+
+        if (availableConnections.length > 0) {
+          const randomConnection =
+            availableConnections[
+              Math.floor(Math.random() * availableConnections.length)
+            ];
+          signal.targetNode =
+            randomConnection.nodeA === signal.currentNode
+              ? randomConnection.nodeB
+              : randomConnection.nodeA;
+          signal.progress = 0;
+        } else {
+          return false; // Remove signal if no connections
+        }
+      }
+
+      signal.progress += signal.speed;
+
+      if (signal.progress >= 1) {
+        // Reached target node
+        signal.currentNode = signal.targetNode;
+        signal.targetNode = null;
+        signal.energy *= 0.9; // Reduce energy
+
+        if (signal.energy < 0.1) {
+          return false; // Remove weak signals
+        }
+      }
+
+      return true;
+    });
+  }
+
+  draw() {
+    // Clear canvas with fade effect
+    this.ctx.fillStyle = "rgba(47, 54, 64, 0.05)";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    // Draw connections
+    this.connections.forEach((connection) => {
+      const nodeA = this.nodes[connection.nodeA];
+      const nodeB = this.nodes[connection.nodeB];
+
+      const alpha = connection.strength * 0.15; // Much more subtle
+      this.ctx.strokeStyle = `rgba(38, 198, 218, ${alpha})`; // Simple color
+      this.ctx.lineWidth = connection.strength * 0.5; // Thinner lines
+      this.ctx.beginPath();
+      this.ctx.moveTo(nodeA.x, nodeA.y);
+      this.ctx.lineTo(nodeB.x, nodeB.y);
+      this.ctx.stroke();
+    });
+
+    // Draw nodes
+    this.nodes.forEach((node) => {
+      const radius = 1 + node.energy * 2; // Smaller nodes
+      const alpha = 0.3 + node.energy * 0.4; // More subtle
+
+      // Simple node core
+      this.ctx.fillStyle = `rgba(38, 198, 218, ${alpha})`;
+      this.ctx.beginPath();
+      this.ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+      this.ctx.fill();
+    });
+
+    // Draw signals (simplified)
+    this.signals.forEach((signal) => {
+      if (signal.targetNode !== null) {
+        const currentNode = this.nodes[signal.currentNode];
+        const targetNode = this.nodes[signal.targetNode];
+
+        const x =
+          currentNode.x + (targetNode.x - currentNode.x) * signal.progress;
+        const y =
+          currentNode.y + (targetNode.y - currentNode.y) * signal.progress;
+
+        // Simple signal dot
+        this.ctx.fillStyle = signal.color;
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, 1 + signal.energy, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+    });
+  }
+
+  animate() {
+    this.updateNodes();
+    this.updateSignals();
+    this.draw();
+    this.animationId = requestAnimationFrame(() => this.animate());
+  }
+
+  destroy() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
+    window.removeEventListener("resize", () => this.resize());
+  }
+}
+
+// Initialize Neural Network Background
+let neuralNetwork = null;
+
+function initNeuralBackground() {
+  const canvas = document.getElementById("neuralCanvas");
+  if (canvas && !neuralNetwork) {
+    neuralNetwork = new NeuralNetwork(canvas);
+  }
+}
+
+// Performance optimization: pause animation when tab is not visible
+function handleVisibilityChange() {
+  if (neuralNetwork) {
+    if (document.hidden) {
+      if (neuralNetwork.animationId) {
+        cancelAnimationFrame(neuralNetwork.animationId);
+        neuralNetwork.animationId = null;
+      }
+    } else {
+      if (!neuralNetwork.animationId) {
+        neuralNetwork.animate();
+      }
+    }
+  }
+}
+
+document.addEventListener("visibilitychange", handleVisibilityChange);
+
+// Floating Bubbles Animation
+function createFloatingBubbles() {
+  const sections = document.querySelectorAll(
+    ".pricing-section, .features-section, .best-package-section, .comparison, .why-choose-us, .testimonials"
+  );
+
+  sections.forEach((section) => {
+    // Check if bubbles already exist
+    if (section.querySelector(".floating-bubbles")) return;
+
+    const bubblesContainer = document.createElement("div");
+    bubblesContainer.className = "floating-bubbles";
+
+    // Create 10 bubbles for each section
+    for (let i = 1; i <= 10; i++) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubblesContainer.appendChild(bubble);
+    }
+
+    section.appendChild(bubblesContainer);
+  });
+}
+
+// Initialize bubbles when page loads
+function initFloatingBubbles() {
+  // Create bubbles immediately
+  createFloatingBubbles();
+
+  // Recreate bubbles if new sections are added dynamically
+  const observer = new MutationObserver(() => {
+    createFloatingBubbles();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  // Initialize Neural Network Background
+  initNeuralBackground();
+
+  // Initialize Floating Bubbles
+  initFloatingBubbles();
+
   // Initialize AOS (Animate On Scroll)
   if (typeof AOS !== "undefined") {
     AOS.init({
