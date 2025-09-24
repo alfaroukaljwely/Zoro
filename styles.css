@@ -868,16 +868,64 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   z-index: 1;
 }
 
-.hero-image img {
-  max-width: 100%;
+/* Hero Image Slider */
+.heroImageSlider {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
   height: auto;
+  overflow: hidden;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  transition: transform 0.3s ease;
 }
 
-.hero-image:hover img {
-  transform: translateY(-5px);
+.heroBannerImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(1.05);
+  border-radius: var(--radius-lg);
+}
+
+.heroBannerImage.active {
+  opacity: 1;
+  transform: scale(1);
+  position: relative;
+}
+
+.heroBannerImage:not(.active) {
+  transform: scale(0.95);
+}
+
+/* Hero Image Hover Effect */
+.heroImageSlider:hover .heroBannerImage.active {
+  transform: scale(1.02) translateY(-5px);
+  box-shadow: 0 20px 40px rgba(38, 198, 218, 0.2);
+}
+
+/* Animation for smooth crossfade */
+@keyframes heroImageFade {
+  0% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.heroBannerImage.fadeIn {
+  animation: heroImageFade 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .hero-waves {
@@ -924,6 +972,30 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   .hero-features .feature {
     justify-content: center;
   }
+
+  .heroImageSlider {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroImageSlider {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 -1rem; /* Extend beyond container padding */
+    border-radius: 0; /* Remove border radius for full width */
+  }
+
+  .heroBannerImage {
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+  }
+
+  .hero-image {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 @media (max-width: 576px) {
@@ -946,6 +1018,21 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 
   .hero-cta .btn {
     width: 100%;
+  }
+
+  .heroImageSlider {
+    max-width: 100%;
+    width: 100vw;
+    margin: 0 calc(-50vw + 50%);
+    border-radius: 0;
+  }
+
+  .heroBannerImage {
+    border-radius: 0;
+  }
+
+  .hero-container {
+    overflow: hidden;
   }
 }
 
@@ -2462,12 +2549,22 @@ ul {
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  align-items: stretch;
+}
+
+/* Ensure all cards have equal height */
+.pricing-grid .pricing-card,
+.pricing-grid .modern-card,
+.pricing-grid .mini-subscription-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .pricing-card {
@@ -2510,7 +2607,8 @@ ul {
 }
 
 .card-features {
-  margin: 1.2rem 0;
+  margin: 0;
+  padding: 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -4328,30 +4426,82 @@ button {
   animation: none;
 }
 
-/* Mini Subscription Card */
-.pricing-card.mini-subscription-card {
+/* Mini Subscription Card - Unified Styling */
+.mini-subscription-card {
   background: linear-gradient(
     145deg,
-    rgba(22, 23, 28, 0.95),
-    rgba(33, 31, 42, 0.95)
+    rgba(38, 198, 218, 0.1) 0%,
+    rgba(0, 172, 193, 0.05) 100%
   );
-  border: 2px solid rgba(245, 182, 56, 0.4);
-  border-radius: 16px;
-  padding: 1.2rem 0.8rem;
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
   text-align: center;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60px;
-  max-width: 85%;
-  margin: 0 auto;
+  min-height: 550px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-md);
   backdrop-filter: blur(8px);
-  transform: scale(0.95);
+}
+
+.mini-subscription-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-cyan);
+  background: linear-gradient(
+    145deg,
+    rgba(38, 198, 218, 0.15) 0%,
+    rgba(0, 172, 193, 0.08) 100%
+  );
+}
+
+.mini-subscription-card h3 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.mini-subscription-card .card-description {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.mini-subscription-card .card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border: none;
+  min-height: 50px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mini-subscription-card .card-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-cyan);
+  background: linear-gradient(
+    135deg,
+    var(--primary-dark) 0%,
+    var(--primary) 100%
+  );
+  color: white;
 }
 
 .pricing-card.mini-subscription-card::before {
@@ -4645,7 +4795,7 @@ button {
   animation: pulse 2s infinite;
 }
 
-/* Modern Product Cards - Zoro Plus Theme */
+/* Modern Product Cards - Unified Subscription Theme */
 .modern-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -4655,6 +4805,10 @@ button {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   position: relative;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-md);
 }
 
 .modern-card:hover {
@@ -4670,6 +4824,7 @@ button {
     rgba(38, 198, 218, 0.1) 0%,
     rgba(0, 172, 193, 0.05) 100%
   );
+  min-height: 580px;
 }
 
 .modern-card.featured::before {
@@ -4685,17 +4840,27 @@ button {
 
 .card-header {
   position: relative;
-  padding: 1.5rem;
+  padding: 0;
   text-align: center;
+  background: linear-gradient(
+    135deg,
+    rgba(38, 198, 218, 0.05) 0%,
+    rgba(0, 172, 193, 0.02) 100%
+  );
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .card-header .card-image {
   width: 100%;
-  max-width: 180px;
-  height: auto;
-  border-radius: var(--radius-md);
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
   transition: transform 0.3s ease;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .modern-card:hover .card-image {
@@ -4747,22 +4912,76 @@ button {
 }
 
 .card-content {
-  padding: 0 1.5rem 1.5rem;
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
+  color: var(--primary);
+  margin-bottom: 0;
   line-height: 1.3;
+  text-align: center;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-description {
   color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
+  text-align: center;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-features {
+  flex-grow: 1;
+  margin-bottom: 0;
+}
+
+.card-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.card-features li:hover {
+  color: var(--primary);
+  transform: translateX(-5px);
+}
+
+.card-features li i {
+  color: var(--primary);
+  font-size: 1rem;
+  min-width: 16px;
+  margin-top: 2px;
+  transition: all 0.3s ease;
+}
+
+.card-features li:hover i {
+  transform: scale(1.2);
+  color: var(--accent);
 }
 
 .card-pricing {
@@ -4795,11 +5014,11 @@ button {
 .btn-modern,
 .btn-featured {
   width: 100%;
-  padding: 0.9rem 1.5rem;
+  padding: 1rem 1.5rem;
   border: none;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -4809,6 +5028,10 @@ button {
   text-align: center;
   position: relative;
   overflow: hidden;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-modern {
@@ -4821,6 +5044,11 @@ button {
   transform: translateY(-2px);
   box-shadow: var(--shadow-cyan);
   color: white;
+  background: linear-gradient(
+    135deg,
+    var(--primary-dark) 0%,
+    var(--primary) 100%
+  );
 }
 
 .btn-featured {
@@ -4833,6 +5061,7 @@ button {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
   color: white;
+  background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
 }
 
 .btn-modern::before,

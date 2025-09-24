@@ -3,16 +3,70 @@
  * Combines all functionality from main.js and inline scripts
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Initialize AOS (Animate On Scroll)
-  if (typeof AOS !== 'undefined') {
+  if (typeof AOS !== "undefined") {
     AOS.init({
       duration: 800,
-      easing: 'ease-in-out',
+      easing: "ease-in-out",
       once: true,
-      offset: 100
+      offset: 100,
     });
   }
+
+  // Hero Image Slider Functionality
+  const initHeroImageSlider = () => {
+    const sliderContainer = document.getElementById("heroImageSlider");
+    if (!sliderContainer) return;
+
+    const images = sliderContainer.querySelectorAll(".heroBannerImage");
+    if (images.length < 2) return;
+
+    let currentIndex = 0;
+    const slideInterval = 4000; // 4 seconds between slides
+
+    const showImage = (index) => {
+      images.forEach((img, i) => {
+        img.classList.remove("active", "fadeIn");
+        if (i === index) {
+          img.classList.add("active", "fadeIn");
+        }
+      });
+    };
+
+    const nextSlide = () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      showImage(currentIndex);
+    };
+
+    // Start the slideshow
+    let slideTimer = setInterval(nextSlide, slideInterval);
+
+    // Pause slideshow on hover
+    sliderContainer.addEventListener("mouseenter", () => {
+      clearInterval(slideTimer);
+    });
+
+    // Resume slideshow when mouse leaves
+    sliderContainer.addEventListener("mouseleave", () => {
+      slideTimer = setInterval(nextSlide, slideInterval);
+    });
+
+    // Pause slideshow when page is not visible (tab switching)
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        clearInterval(slideTimer);
+      } else {
+        slideTimer = setInterval(nextSlide, slideInterval);
+      }
+    });
+
+    // Initialize first slide
+    showImage(0);
+  };
+
+  // Initialize hero image slider
+  initHeroImageSlider();
 
   // Set current year in footer
   const currentYearElement = document.getElementById("current-year");
@@ -25,191 +79,202 @@ document.addEventListener('DOMContentLoaded', function() {
     anchor.addEventListener("click", function (e) {
       const targetId = this.getAttribute("href");
       if (targetId === "#") return;
-      
+
       e.preventDefault();
       const targetElement = document.querySelector(targetId);
 
       if (targetElement) {
         window.scrollTo({
           top: targetElement.offsetTop - 80, // Adjust for fixed header
-          behavior: "smooth"
+          behavior: "smooth",
         });
       }
     });
   });
 
   // Header and Navigation
-  const header = document.getElementById('header');
-  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const navMenu = document.getElementById('mainNav');
-  const navLinks = document.querySelectorAll('[data-nav-link]');
-  const backToTopBtn = document.getElementById('backToTop');
-  const ctaButton = document.getElementById('ctaButton');
+  const header = document.getElementById("header");
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+  const navMenu = document.getElementById("mainNav");
+  const navLinks = document.querySelectorAll("[data-nav-link]");
+  const backToTopBtn = document.getElementById("backToTop");
+  const ctaButton = document.getElementById("ctaButton");
 
   // Mobile menu functionality
   if (mobileMenuBtn && navMenu) {
     const toggleMobileMenu = (isExpanded) => {
-      mobileMenuBtn.setAttribute('aria-expanded', isExpanded);
-      navMenu.classList.toggle('active', isExpanded);
-      mobileMenuBtn.classList.toggle('active', isExpanded);
-      document.body.style.overflow = isExpanded ? 'hidden' : '';
-      
+      mobileMenuBtn.setAttribute("aria-expanded", isExpanded);
+      navMenu.classList.toggle("active", isExpanded);
+      mobileMenuBtn.classList.toggle("active", isExpanded);
+      document.body.style.overflow = isExpanded ? "hidden" : "";
+
       if (isExpanded) {
-        document.addEventListener('keydown', handleEscapeKey);
+        document.addEventListener("keydown", handleEscapeKey);
       } else {
-        document.removeEventListener('keydown', handleEscapeKey);
+        document.removeEventListener("keydown", handleEscapeKey);
       }
     };
-    
+
     const handleEscapeKey = (e) => {
-      if (e.key === 'Escape' || e.key === 'Esc') {
+      if (e.key === "Escape" || e.key === "Esc") {
         toggleMobileMenu(false);
       }
     };
-    
-    mobileMenuBtn.addEventListener('click', () => {
-      const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+
+    mobileMenuBtn.addEventListener("click", () => {
+      const isExpanded = mobileMenuBtn.getAttribute("aria-expanded") === "true";
       toggleMobileMenu(!isExpanded);
     });
-    
+
     // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-      const isClickInside = navMenu.contains(e.target) || mobileMenuBtn.contains(e.target);
-      if (!isClickInside && navMenu.classList.contains('active')) {
+    document.addEventListener("click", (e) => {
+      const isClickInside =
+        navMenu.contains(e.target) || mobileMenuBtn.contains(e.target);
+      if (!isClickInside && navMenu.classList.contains("active")) {
         toggleMobileMenu(false);
       }
     });
-    
+
     // Close mobile menu when clicking on a nav link
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
         if (window.innerWidth <= 992) {
           toggleMobileMenu(false);
         }
       });
     });
   }
-  
+
   // Header scroll effect
   if (header) {
     let lastScroll = 0;
     const headerHeight = header.offsetHeight;
     let ticking = false;
-    
+
     const updateHeader = () => {
       const currentScroll = window.pageYOffset;
-      
+
       // Add/remove scrolled class based on scroll position
-      header.classList.toggle('scrolled', currentScroll > 50);
-      
+      header.classList.toggle("scrolled", currentScroll > 50);
+
       // Only run the hide/show logic if not in mobile menu
-      if (!navMenu || !navMenu.classList.contains('active')) {
+      if (!navMenu || !navMenu.classList.contains("active")) {
         // Hide/show header on scroll
         if (currentScroll > lastScroll && currentScroll > headerHeight) {
           // Scrolling down
-          header.classList.add('hide');
+          header.classList.add("hide");
         } else {
           // Scrolling up
-          header.classList.remove('hide');
+          header.classList.remove("hide");
         }
       }
-      
+
       // Show/hide back to top button
       if (backToTopBtn) {
-        backToTopBtn.classList.toggle('show', currentScroll > 300);
+        backToTopBtn.classList.toggle("show", currentScroll > 300);
       }
-      
+
       lastScroll = currentScroll <= 0 ? 0 : currentScroll;
       ticking = false;
     };
-    
+
     const onScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(updateHeader);
         ticking = true;
       }
     };
-    
-    window.addEventListener('scroll', onScroll, { passive: true });
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     updateHeader(); // Initialize header state
   }
-  
+
   // Back to top button
   if (backToTopBtn) {
-    backToTopBtn.addEventListener('click', (e) => {
+    backToTopBtn.addEventListener("click", (e) => {
       e.preventDefault();
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
       // Focus on header for keyboard users
-      const header = document.querySelector('header');
+      const header = document.querySelector("header");
       if (header) {
-        header.setAttribute('tabindex', '-1');
+        header.setAttribute("tabindex", "-1");
         header.focus();
       }
     });
   }
-  
+
   // Set active navigation link based on scroll position
   const setActiveLink = () => {
     const scrollPosition = window.scrollY + 100;
-    
-    document.querySelectorAll('section[id]').forEach(section => {
+
+    document.querySelectorAll("section[id]").forEach((section) => {
       const sectionTop = section.offsetTop;
       const sectionHeight = section.offsetHeight;
-      const sectionId = section.getAttribute('id');
-      
-      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-        navLinks.forEach(link => {
-          link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+      const sectionId = section.getAttribute("id");
+
+      if (
+        scrollPosition >= sectionTop &&
+        scrollPosition < sectionTop + sectionHeight
+      ) {
+        navLinks.forEach((link) => {
+          link.classList.toggle(
+            "active",
+            link.getAttribute("href") === `#${sectionId}`
+          );
         });
       }
     });
   };
-  
+
   // Run on load and scroll
-  window.addEventListener('load', setActiveLink);
-  window.addEventListener('scroll', setActiveLink, { passive: true });
-  
+  window.addEventListener("load", setActiveLink);
+  window.addEventListener("scroll", setActiveLink, { passive: true });
+
   // CTA Button hover effect
   if (ctaButton) {
     const updateCtaHover = (isHovered) => {
-      const icon = ctaButton.querySelector('i');
+      const icon = ctaButton.querySelector("i");
       if (icon) {
-        icon.style.transform = isHovered ? 'translateX(-5px)' : 'translateX(0)';
+        icon.style.transform = isHovered ? "translateX(-5px)" : "translateX(0)";
       }
     };
-    
-    ctaButton.addEventListener('mouseenter', () => updateCtaHover(true));
-    ctaButton.addEventListener('mouseleave', () => updateCtaHover(false));
-    ctaButton.addEventListener('focus', () => updateCtaHover(true));
-    ctaButton.addEventListener('blur', () => updateCtaHover(false));
+
+    ctaButton.addEventListener("mouseenter", () => updateCtaHover(true));
+    ctaButton.addEventListener("mouseleave", () => updateCtaHover(false));
+    ctaButton.addEventListener("focus", () => updateCtaHover(true));
+    ctaButton.addEventListener("blur", () => updateCtaHover(false));
   }
-  
+
   // Add animation to nav items on page load
   if (navLinks.length > 0) {
     navLinks.forEach((link, index) => {
-      link.style.opacity = '0';
-      link.style.transform = 'translateY(10px)';
-      link.style.transition = `opacity 0.3s ease ${index * 0.1}s, transform 0.3s ease ${index * 0.1}s`;
-      
+      link.style.opacity = "0";
+      link.style.transform = "translateY(10px)";
+      link.style.transition = `opacity 0.3s ease ${
+        index * 0.1
+      }s, transform 0.3s ease ${index * 0.1}s`;
+
       // Trigger reflow
       void link.offsetWidth;
-      
-      link.style.opacity = '1';
-      link.style.transform = 'translateY(0)';
+
+      link.style.opacity = "1";
+      link.style.transform = "translateY(0)";
     });
   }
-  
+
   // Handle reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
   if (prefersReducedMotion) {
-    document.documentElement.style.scrollBehavior = 'auto';
+    document.documentElement.style.scrollBehavior = "auto";
   }
 
   // Initialize accordion functionality
-  const accordionItems = document.querySelectorAll('.accordion-item');
+  const accordionItems = document.querySelectorAll(".accordion-item");
 
   accordionItems.forEach((item) => {
     const header = item.querySelector(".accordion-header");
