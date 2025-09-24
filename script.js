@@ -1,5 +1,4 @@
 /**
- * rqgstore - Main JavaScript File
  * Combines all functionality from main.js and inline scripts
  */
 
@@ -23,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (images.length < 2) return;
 
     let currentIndex = 0;
-    const slideInterval = 4000; // 4 seconds between slides
+    const slideInterval = 7000; // 7 seconds between slides
 
     const showImage = (index) => {
       images.forEach((img, i) => {
