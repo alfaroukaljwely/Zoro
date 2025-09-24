@@ -990,13 +990,13 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 }
 
 .ticker-item:hover {
-  color: var(--accent);
+  color: var(--text-primary);
   transform: scale(1.05);
 }
 
 .ticker-item i {
   margin-left: 0.5rem;
-  color: var(--accent);
+  color: wa;
   font-size: 1rem;
 }
 
