@@ -5093,11 +5093,11 @@ button {
   }
 
   .card-header {
-    padding: 1rem;
+    /* padding: 1rem; */
   }
 
   .card-header .card-image {
-    max-width: 150px;
+    max-width: 100%;
   }
 
   .card-content {
