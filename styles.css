@@ -832,7 +832,7 @@ body.using-mouse :focus:not(:focus-visible) {
   padding: 0 2rem; /* Added padding for better spacing */
   padding: 0 2rem;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 1rem auto 0;
   position: relative;
 }
 
@@ -1272,11 +1272,14 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 }
 
 /* Hero Section */
+#home {
+  margin-top: 6.6rem;
+}
+
 .hero {
   position: relative;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: white;
-  margin-top: 80px; /* Added to ensure hero is fully visible below header */
   padding: 6rem 0 0;
   overflow: hidden;
 }
