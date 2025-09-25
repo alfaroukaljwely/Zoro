@@ -3907,7 +3907,7 @@ body {
 }
 
 .testimonial-text {
-  font-size: 0.95rem;
+  font-size: 01.4rem;
 }
 
 /* Contact Form */
@@ -5158,7 +5158,7 @@ button {
   gap: 0.75rem;
   padding: 0.5rem 0;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1.3rem;
   line-height: 1.5;
   transition: all 0.3s ease;
 }
