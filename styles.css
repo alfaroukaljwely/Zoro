@@ -556,35 +556,8 @@ body {
   font-size: 1.5rem;
 }
 
-/* General text element styling */
-li {
-  font-size: 1.5rem;
-}
 
-span {
-  font-size: 1.5rem;
-}
 
-td {
-  font-size: 1.5rem;
-}
-
-/* Button text sizing */
-.btn {
-  font-size: 1.5rem;
-}
-
-/* Input and form text sizing */
-input,
-textarea,
-select {
-  font-size: 1.5rem;
-}
-
-/* Link text sizing */
-a {
-  font-size: 1.5rem;
-}
 
 a {
   color: var(--primary);
@@ -717,7 +690,7 @@ img {
 /* Header */
 .header {
   position: fixed;
-  top: 40px; /* Height of the ticker bar */
+  top: 20px; /* Reduced from 40px */
   left: 0;
   right: 0;
   z-index: 1000;
@@ -734,7 +707,7 @@ img {
 
 .header.scrolled {
   background: rgba(0, 27, 61, 0.98);
-  padding: 5px 0;
+  padding: 3px 0; /* Reduced padding */
   box-shadow: var(--shadow-lg);
 }
 
@@ -856,6 +829,7 @@ body.using-mouse :focus:not(:focus-visible) {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 2rem; /* Added padding for better spacing */
   padding: 0 2rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -987,7 +961,7 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 
 .nav-link i {
   margin-left: 6px;
-  font-size: 01em;
+  font-size: 1rem;
   transition: transform 0.3s ease;
 }
 
@@ -1202,7 +1176,7 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   .nav-link {
     display: flex;
     padding: 1rem 1.2rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     border-radius: 8px;
     width: 100%;
     color: rgba(255, 255, 255, 0.9);
@@ -1302,6 +1276,7 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   position: relative;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: white;
+  margin-top: 80px; /* Added to ensure hero is fully visible below header */
   padding: 6rem 0 0;
   overflow: hidden;
 }
