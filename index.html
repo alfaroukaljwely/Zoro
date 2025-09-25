@@ -285,7 +285,7 @@
                   <li><i class="fas fa-sms"></i> طريقة الاستلام: رابط مباشر + رسالة SMS</li>
                 </ul>
               </div>
-              <a href="https://zoroplus.com/ar/plus-iphone-apps-subscription-gold-package/p1679350868" class="btn-modern">اشترك الآن</a>
+              <a href="https://zoroplus.com/ar/plus-iphone-apps-subscription-gold-package/p1679350868" class="btn-modern" data-out rel="noopener">اشترك الآن</a>
             </div>
           </div>
 
@@ -313,7 +313,7 @@
                   <li><i class="fas fa-rocket"></i> أولوية في التحديثات الجديدة</li>
                 </ul>
               </div>
-              <a href="https://zoroplus.com/ar/%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA-%D8%A8%D9%84%D8%B3-%D9%84%D9%84%D8%A7%D9%8A%D9%81%D9%88%D9%86-%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9-%D8%A7%D9%84%D9%85%D9%84%D9%83%D9%8A%D8%A9/p1000638153" class="btn-modern">اشترك الآن</a>
+              <a href="https://zoroplus.com/ar/%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D8%A7%D8%AA-%D8%A8%D9%84%D8%B3-%D9%84%D9%84%D8%A7%D9%8A%D9%81%D9%88%D9%86-%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9-%D8%A7%D9%84%D9%85%D9%84%D9%83%D9%8A%D8%A9/p1000638153" class="btn-modern" data-out rel="noopener">اشترك الآن</a>
             </div>
           </div>
 
@@ -362,7 +362,7 @@
                   <li><i class="fas fa-headset"></i> دعم كامل من الفريق الفني</li>
                 </ul>
               </div>
-              <a href="https://zoroplus.com/ar/plus-android-apps-subscription/p945200714" class="btn-modern">اشترك الآن</a>
+              <a href="https://zoroplus.com/ar/plus-android-apps-subscription/p945200714" class="btn-modern" data-out rel="noopener">اشترك الآن</a>
             </div>
           </div>
 
@@ -420,6 +420,8 @@
             class="cta-button"
             data-aos="fade-up"
             data-aos-delay="150"
+            data-out
+            rel="noopener"
             >تصفح منتجاتنا الآن</a
           >
           <div
@@ -703,7 +705,7 @@
           </div>
           
           <div class="cta-container" data-aos="fade-up" data-aos-delay="400">
-            <a href="#ios-packages" class="cta-button pulse-animation">
+            <a href="#ios-packages" class="cta-button pulse-animation" data-out rel="noopener">
               <span>اطلب و استمتع بأفضل تجربة</span>
             </a>
           </div>
@@ -1019,5 +1021,82 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="script.js"></script>
+    
+    <!-- Outbound Link Tracking Script -->
+    <script>
+      (function() {
+        // Function to get URL parameters
+        function getUrlParams() {
+          const params = new URLSearchParams(window.location.search);
+          const trackingParams = {
+            gclid: params.get('gclid'),
+            gbraid: params.get('gbraid'),
+            wbraid: params.get('wbraid'),
+            utm_source: params.get('utm_source'),
+            utm_medium: params.get('utm_medium'),
+            utm_campaign: params.get('utm_campaign'),
+            utm_term: params.get('utm_term'),
+            utm_content: params.get('utm_content')
+          };
+          
+          // Remove null values
+          Object.keys(trackingParams).forEach(key => {
+            if (trackingParams[key] === null) {
+              delete trackingParams[key];
+            }
+          });
+          
+          return trackingParams;
+        }
+        
+        // Function to append parameters to URL
+        function appendTrackingParams(url, params) {
+          const urlObj = new URL(url);
+          
+          // If no tracking params found, add default UTM values
+          if (Object.keys(params).length === 0) {
+            params = {
+              utm_source: 'landing',
+              utm_medium: 'cta',
+              utm_campaign: 'iptv_sa'
+            };
+          }
+          
+          Object.keys(params).forEach(key => {
+            urlObj.searchParams.set(key, params[key]);
+          });
+          
+          return urlObj.toString();
+        }
+        
+        // Initialize tracking on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+          const trackingParams = getUrlParams();
+          
+          // Find all outbound links with data-out attribute
+          const outboundLinks = document.querySelectorAll('a[data-out]');
+          
+          outboundLinks.forEach(function(link) {
+            const originalHref = link.getAttribute('href');
+            
+            // Only process if it's a valid URL and points to rqgstore.com
+            if (originalHref && originalHref.includes('rqgstore.com')) {
+              try {
+                const updatedUrl = appendTrackingParams(originalHref, trackingParams);
+                link.setAttribute('href', updatedUrl);
+                
+                // Ensure rel="noopener" is set
+                const currentRel = link.getAttribute('rel') || '';
+                if (!currentRel.includes('noopener')) {
+                  link.setAttribute('rel', currentRel + ' noopener');
+                }
+              } catch (e) {
+                console.warn('Failed to update tracking for link:', originalHref, e);
+              }
+            }
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
