@@ -767,7 +767,7 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 /* Responsive Styles */
 @media (max-width: 1200px) {
   .header-container {
-    padding: 0 1.5rem;
+    padding: 10px 1.5rem 0;
   }
 
   .nav-link {
@@ -914,7 +914,7 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
 
 @media (max-width: 576px) {
   .header-container {
-    padding: 0 1.2rem;
+    padding: 10px 1.2rem 0;
   }
 
   .logo a {
@@ -5364,7 +5364,7 @@ button {
   }
 
   span {
-    font-size: 1.7rem;
+    font-size: 1.4rem;
   }
 
   .section-subtitle {
