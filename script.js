@@ -385,6 +385,10 @@ function updateCountdown() {
   document.getElementById("minutes").innerHTML = minutes
     .toString()
     .padStart(2, "0");
+  // عداد الثواني
+  document.getElementById("seconds").innerHTML = seconds
+    .toString()
+    .padStart(2, "0");
 
   if (days < 1) {
     document.querySelector(".countdown").classList.add("animate-pulse");
