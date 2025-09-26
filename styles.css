@@ -206,6 +206,16 @@
   --shadow-lg: 0 8px 24px rgba(0, 27, 61, 0.25);
   --shadow-xl: 0 16px 48px rgba(0, 27, 61, 0.3);
   --shadow-cyan: 0 4px 20px rgba(38, 198, 218, 0.3);
+
+  /* Enhanced scroll margin for targeted package cards */
+  --scroll-offset: 90px;
+}
+
+/* Scroll margin for package cards to handle sticky header */
+#golden-package-ios,
+#royal-package-ios,
+#ipad-package-ios {
+  scroll-margin-top: var(--scroll-offset);
 }
 
 /* Base Styles */
@@ -380,7 +390,7 @@ img {
 
 .header.scrolled {
   background: rgba(0, 27, 61, 0.98);
-  padding: 3px 0; /* Reduced padding */
+  padding: 5px 0; /* Reduced padding */
   box-shadow: var(--shadow-lg);
 }
 
@@ -5287,10 +5297,6 @@ button {
 @media (max-width: 768px) {
   .modern-card {
     margin-bottom: 1.5rem;
-  }
-
-  .card-header {
-    /* padding: 1rem; */
   }
 
   .card-header .card-image {

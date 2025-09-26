@@ -73,23 +73,41 @@ document.addEventListener("DOMContentLoaded", function () {
     currentYearElement.textContent = new Date().getFullYear();
   }
 
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      const targetId = this.getAttribute("href");
-      if (targetId === "#") return;
-
+  // Enhanced scroll functionality for recommendation buttons
+  document.querySelectorAll(".recommendation-button").forEach((button) => {
+    button.addEventListener("click", function (e) {
       e.preventDefault();
-      const targetElement = document.querySelector(targetId);
-
+      const targetId = this.getAttribute("href").substring(1);
+      const targetElement = document.getElementById(targetId);
       if (targetElement) {
-        window.scrollTo({
-          top: targetElement.offsetTop - 80, // Adjust for fixed header
+        targetElement.scrollIntoView({
           behavior: "smooth",
+          block: "start",
+          inline: "nearest",
         });
       }
     });
   });
+
+  // Smooth scroll for other anchor links
+  document
+    .querySelectorAll('a[href^="#"]:not(.recommendation-button)')
+    .forEach((anchor) => {
+      anchor.addEventListener("click", function (e) {
+        const targetId = this.getAttribute("href");
+        if (targetId === "#") return;
+
+        e.preventDefault();
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80, // Adjust for fixed header
+            behavior: "smooth",
+          });
+        }
+      });
+    });
 
   // Header and Navigation
   const header = document.getElementById("header");
