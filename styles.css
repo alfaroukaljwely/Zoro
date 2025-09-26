@@ -1285,11 +1285,11 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   }
 
   .ticker-item i {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .ticker-content {
-    animation-duration: 40s;
+    animation-duration: 80s;
   }
 }
 
@@ -1304,11 +1304,11 @@ body.using-mouse .nav-link:focus:not(:focus-visible) {
   }
 
   .ticker-item i {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 
   .ticker-content {
-    animation-duration: 30s;
+    animation-duration: 100s;
   }
 }
 
@@ -5180,7 +5180,7 @@ button {
 
 .card-features li i {
   color: var(--primary);
-  font-size: 1rem;
+  font-size: 1.2rem;
   min-width: 16px;
   margin-top: 2px;
   transition: all 0.3s ease;
